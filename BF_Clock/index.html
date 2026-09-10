@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BF Clock · 逆行时钟</title>
+<meta name="description" content="一台从你第一次打开它的那一刻起，就一直向过去走的时钟。">
+<meta name="theme-color" content="#07090f">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#8634;</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="starfield" aria-hidden="true"></div>
+
+<main class="stage">
+
+  <header class="masthead">
+    <h1 class="wordmark">BF&thinsp;<span>Clock</span></h1>
+    <p class="tagline">Backward-Flowing Clock &middot; 逆行时钟</p>
+  </header>
+
+  <section class="dial-wrap" aria-hidden="true">
+    <svg class="dial" viewBox="0 0 400 400" role="presentation">
+      <defs>
+        <radialGradient id="faceGlow" cx="50%" cy="42%" r="62%">
+          <stop offset="0%"   stop-color="#131c30"/>
+          <stop offset="70%"  stop-color="#0a0e19"/>
+          <stop offset="100%" stop-color="#05070d"/>
+        </radialGradient>
+      </defs>
+
+      <circle cx="200" cy="200" r="188" fill="url(#faceGlow)"/>
+      <circle cx="200" cy="200" r="188" class="rim"/>
+      <circle cx="200" cy="200" r="168" class="rim-inner"/>
+
+      <g id="ticks"></g>
+      <g id="numerals"></g>
+
+      <!-- 指针：绘制成 12 点方向，靠 rotate 定位 -->
+      <g id="handHour"   class="hand hand-hour">
+        <line x1="200" y1="212" x2="200" y2="112"/>
+      </g>
+      <g id="handMinute" class="hand hand-minute">
+        <line x1="200" y1="218" x2="200" y2="74"/>
+      </g>
+      <g id="handSecond" class="hand hand-second">
+        <line x1="200" y1="228" x2="200" y2="58"/>
+      </g>
+
+      <circle cx="200" cy="200" r="7"   class="pivot"/>
+      <circle cx="200" cy="200" r="2.6" class="pivot-dot"/>
+
+      <text x="200" y="268" class="dial-mark">&#8634;&nbsp;REVERSE</text>
+    </svg>
+  </section>
+
+  <section class="readout">
+    <div class="clock-line">
+      <time id="digital" class="digital" datetime="">--:--:--</time><span id="centis" class="centis">.00</span>
+    </div>
+    <div id="datestamp" class="datestamp">&nbsp;</div>
+  </section>
+
+  <section class="meters">
+    <div class="meter">
+      <div class="meter-label">已回溯</div>
+      <div id="rewound" class="meter-value">--</div>
+    </div>
+    <div class="meter">
+      <div class="meter-label">出发锚点（现实时间）</div>
+      <div id="anchor" class="meter-value">--</div>
+    </div>
+  </section>
+
+  <section class="controls">
+    <button id="btnReset" type="button" class="btn">重设锚点 · 从此刻重新出发</button>
+    <button id="btnShare" type="button" class="btn btn-ghost">复制带锚点的链接</button>
+  </section>
+
+  <p id="toast" class="toast" role="status" aria-live="polite"></p>
+
+  <footer class="footnote">
+    <p>时间不由计时器驱动，而由锚点推算：<code>显示时间 = 2 × 锚点 − 此刻</code>。<br>
+       所以关掉页面、关掉电脑、过几天再来，它都一直在往回走。</p>
+    <p class="footnote-dim">锚点存在这台设备的浏览器里。换设备或清空站点数据会重新出发；用上面的链接可把同一段旅程带走。</p>
+  </footer>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

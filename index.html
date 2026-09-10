@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Time Traveler Tool Sets</title>
+<meta name="description" content="给未来的时间旅行者准备的一套小工具。">
+<meta name="theme-color" content="#07090f">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9203;</text></svg>">
+<style>
+  :root { --ink:#e8ecf6; --dim:#7f8ba6; --faint:#4a5470; --accent:#6ee7ff; --line:#1b2438; }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; min-height:100vh; background:#07090f; color:var(--ink);
+    font-family:"Segoe UI",-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    display:flex; justify-content:center; padding:clamp(28px,7vw,80px) 20px;
+    background-image:radial-gradient(1000px 600px at 50% -10%, rgba(46,120,160,.16), transparent 70%);
+  }
+  main { width:100%; max-width:600px; }
+  h1 { margin:0; font-size:clamp(20px,5vw,27px); font-weight:300; letter-spacing:.3em; text-indent:.3em; }
+  .sub { margin:10px 0 0; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--faint); }
+  .intro { margin:26px 0 34px; font-size:14px; line-height:1.9; color:var(--dim); }
+  ul { list-style:none; margin:0; padding:0; display:grid; gap:12px; }
+  a.tool {
+    display:block; text-decoration:none; color:inherit;
+    border:1px solid var(--line); border-radius:14px; padding:20px 22px;
+    background:rgba(255,255,255,.035); transition:border-color .18s, background .18s;
+  }
+  a.tool:hover { border-color:#2a7f96; background:rgba(110,231,255,.05); }
+  .name { font-size:17px; letter-spacing:.06em; }
+  .name .arrow { color:var(--accent); margin-left:8px; }
+  .desc { margin-top:8px; font-size:13px; line-height:1.75; color:var(--dim); }
+  .tag { display:inline-block; margin-top:12px; font-size:11px; letter-spacing:.14em;
+         color:#2a7f96; border:1px solid var(--line); border-radius:999px; padding:3px 11px; }
+  footer { margin-top:40px; padding-top:18px; border-top:1px solid var(--line);
+           font-size:12px; line-height:1.9; color:#3c445c; }
+</style>
+</head>
+<body>
+<main>
+  <h1>TIME TRAVELER</h1>
+  <p class="sub">Tool Sets</p>
+
+  <p class="intro">给未来的时间旅行者准备的一套小工具。每件工具住在自己的文件夹里，互不打扰，随时可以再添新的。</p>
+
+  <ul>
+    <li>
+      <a class="tool" href="BF_Clock/">
+        <div class="name">BF Clock<span class="arrow">&#8634;</span></div>
+        <div class="desc">逆行时钟。从你第一次打开它的那一刻起往回走，关掉页面也照走不误 —— 因为它不靠计时器，靠锚点推算。</div>
+        <div class="tag">01 &middot; 计时</div>
+      </a>
+    </li>
+  </ul>
+
+  <footer>
+    <p>纯静态，无后端，无追踪。</p>
+  </footer>
+</main>
+</body>
+</html>
