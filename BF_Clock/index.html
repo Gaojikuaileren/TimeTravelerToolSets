@@ -3,89 +3,239 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>BF Clock · 逆行时钟</title>
-<meta name="description" content="一台从你第一次打开它的那一刻起，就一直向过去走的时钟。">
-<meta name="theme-color" content="#07090f">
+<title>BF Clock · 逆行时间导航</title>
+<meta name="description" content="逆行时间导航仪。你的主观时间继续向前，你所在的世界时间向过去移动。">
+<meta name="theme-color" content="#06080d">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#8634;</text></svg>">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="starfield" aria-hidden="true"></div>
+<div class="field" aria-hidden="true"></div>
 
-<main class="stage">
+<main class="instrument">
 
+  <!-- ── 标识与状态 ─────────────────────────────────── -->
   <header class="masthead">
-    <h1 class="wordmark">BF&thinsp;<span>Clock</span></h1>
-    <p class="tagline">Backward-Flowing Clock &middot; 逆行时钟</p>
+    <div class="brand">
+      <h1 class="wordmark">BF&nbsp;CLOCK</h1>
+      <p class="brand-sub">TEMPORAL NAVIGATION · BACKWARD FLOW</p>
+      <p class="brand-cn">逆行时间导航</p>
+    </div>
+    <div id="statusChip" class="status" role="status" aria-live="polite">
+      <span class="status-dot" aria-hidden="true"></span>
+      <span id="statusText">INVERSION ACTIVE</span>
+    </div>
   </header>
 
-  <section class="dial-wrap" aria-hidden="true">
-    <svg class="dial" viewBox="0 0 400 400" role="presentation">
+  <!-- ── 表盘：世界时间的视觉表达 ───────────────────── -->
+  <section class="dial-wrap">
+    <svg class="dial" viewBox="0 0 400 400" aria-hidden="true" focusable="false">
       <defs>
-        <radialGradient id="faceGlow" cx="50%" cy="42%" r="62%">
-          <stop offset="0%"   stop-color="#131c30"/>
-          <stop offset="70%"  stop-color="#0a0e19"/>
-          <stop offset="100%" stop-color="#05070d"/>
+        <radialGradient id="faceGlow" cx="50%" cy="40%" r="64%">
+          <stop offset="0%"   stop-color="#111a2c"/>
+          <stop offset="72%"  stop-color="#090d17"/>
+          <stop offset="100%" stop-color="#05070c"/>
         </radialGradient>
       </defs>
 
-      <circle cx="200" cy="200" r="188" fill="url(#faceGlow)"/>
-      <circle cx="200" cy="200" r="188" class="rim"/>
-      <circle cx="200" cy="200" r="168" class="rim-inner"/>
+      <!-- 逆行方向环 -->
+      <circle cx="200" cy="200" r="181" class="vector-ring"/>
+      <path d="M 225.2 20.8 A 181 181 0 0 1 359.8 115.0" class="vector-arc"/>
+      <polygon points="216.3,19.5 225.9,15.9 224.5,25.8" class="vector-head"/>
+
+      <circle cx="200" cy="200" r="168" fill="url(#faceGlow)"/>
+      <circle cx="200" cy="200" r="168" class="rim"/>
+      <circle cx="200" cy="200" r="150" class="rim-inner"/>
 
       <g id="ticks"></g>
       <g id="numerals"></g>
 
-      <!-- 指针：绘制成 12 点方向，靠 rotate 定位 -->
-      <g id="handHour"   class="hand hand-hour">
-        <line x1="200" y1="212" x2="200" y2="112"/>
-      </g>
-      <g id="handMinute" class="hand hand-minute">
-        <line x1="200" y1="218" x2="200" y2="74"/>
-      </g>
-      <g id="handSecond" class="hand hand-second">
-        <line x1="200" y1="228" x2="200" y2="58"/>
-      </g>
+      <!-- 指针画在 12 点方向，靠 rotate 定位 -->
+      <g id="handHour"   class="hand hand-hour"><line   x1="200" y1="211" x2="200" y2="118"/></g>
+      <g id="handMinute" class="hand hand-minute"><line x1="200" y1="216" x2="200" y2="84"/></g>
+      <g id="handSecond" class="hand hand-second"><line x1="200" y1="224" x2="200" y2="70"/></g>
 
-      <circle cx="200" cy="200" r="7"   class="pivot"/>
-      <circle cx="200" cy="200" r="2.6" class="pivot-dot"/>
-
-      <text x="200" y="268" class="dial-mark">&#8634;&nbsp;REVERSE</text>
+      <circle cx="200" cy="200" r="6.5" class="pivot"/>
+      <circle cx="200" cy="200" r="2.4" class="pivot-dot"/>
     </svg>
   </section>
 
-  <section class="readout">
-    <div class="clock-line">
-      <time id="digital" class="digital" datetime="">--:--:--</time><span id="centis" class="centis">.00</span>
+  <!-- ── 第一焦点：WORLD TIME ───────────────────────── -->
+  <section class="world">
+    <div class="label-row">
+      <span class="label">WORLD TIME</span>
+      <span class="label-cn">世界时间</span>
     </div>
-    <div id="datestamp" class="datestamp">&nbsp;</div>
+    <div class="world-time">
+      <span class="dir-rev" aria-hidden="true">←</span>
+      <time id="worldClock" class="world-clock" datetime="">--:--:--</time><span id="worldCentis" class="world-centis">.00</span>
+    </div>
+    <div id="worldDate" class="world-date">&nbsp;</div>
   </section>
 
-  <section class="meters">
-    <div class="meter">
-      <div class="meter-label">已回溯</div>
-      <div id="rewound" class="meter-value">--</div>
+  <!-- ── 第三焦点：时间方向 ─────────────────────────── -->
+  <section class="vectors" aria-label="时间方向">
+    <div class="label-row">
+      <span class="label">TEMPORAL VECTOR</span>
+      <span class="label-cn">时间方向</span>
     </div>
-    <div class="meter">
-      <div class="meter-label">出发锚点（现实时间）</div>
-      <div id="anchor" class="meter-value">--</div>
+
+    <div class="vector">
+      <span class="v-who">YOU</span>
+      <span class="v-arrow fwd" aria-hidden="true">→</span>
+      <span class="v-rate fwd">+1.000&thinsp;s/s</span>
+      <span class="v-slot">
+        <span class="v-slot-label">SUBJECTIVE ELAPSED</span>
+        <span id="subjElapsed" class="v-slot-value">00:00:00</span>
+      </span>
+    </div>
+
+    <div class="vector">
+      <span class="v-who">WORLD</span>
+      <span class="v-arrow rev" aria-hidden="true">←</span>
+      <span id="worldRate" class="v-rate rev">&minus;1.000&thinsp;s/s</span>
+      <span class="v-slot">
+        <span class="v-slot-label">INVERSION START</span>
+        <button id="btnAnchor" type="button" class="v-slot-value linkish"
+                title="自定义逆行起点">--</button>
+      </span>
+    </div>
+
+    <div id="displacementRow" class="vector vector-extra" hidden>
+      <span class="v-who">Δ</span>
+      <span class="v-arrow rev" aria-hidden="true">←</span>
+      <span class="v-rate dim">DISPLACEMENT</span>
+      <span class="v-slot">
+        <span class="v-slot-label">世界位移</span>
+        <span id="displacement" class="v-slot-value">--</span>
+      </span>
     </div>
   </section>
 
-  <section class="controls">
-    <button id="btnReset" type="button" class="btn">重设锚点 · 从此刻重新出发</button>
-    <button id="btnShare" type="button" class="btn btn-ghost">复制带锚点的链接</button>
+  <!-- ── 航程轨迹 ───────────────────────────────────── -->
+  <section class="journey" aria-label="航程轨迹">
+    <div class="label-row">
+      <span class="label">JOURNEY</span>
+      <span id="journeyNote" class="label-cn">NO TARGET SET · 未设定目标</span>
+    </div>
+
+    <div class="track-ends">
+      <span class="end-left">
+        <span class="end-tag" id="tlLeftTag">← PAST</span>
+        <span class="end-val" id="tlLeftVal">&nbsp;</span>
+      </span>
+      <span class="end-right">
+        <span class="end-tag">START</span>
+        <span class="end-val" id="tlRightVal">--:--</span>
+      </span>
+    </div>
+
+    <div id="track" class="track" data-mode="open">
+      <div class="track-line"></div>
+      <div id="trackFill" class="track-fill"></div>
+      <div id="trackDot" class="track-dot"><span class="track-dot-label">NOW</span></div>
+    </div>
+  </section>
+
+  <!-- ── 第四焦点：目标与 ETA ───────────────────────── -->
+  <section id="targetPanel" class="target-panel" data-state="none">
+    <div class="target-grid">
+      <div class="target-cell">
+        <div class="cell-label">TARGET <span class="cn">目标世界时间</span></div>
+        <div id="targetValue" class="cell-value">NOT SET</div>
+        <div id="targetDate" class="cell-sub"></div>
+      </div>
+      <div class="target-cell">
+        <div class="cell-label">TIME TO TARGET <span class="cn">距目标</span></div>
+        <div id="etaValue" class="cell-value eta">--:--:--</div>
+        <div id="etaReal" class="cell-sub" hidden></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 操作 ───────────────────────────────────────── -->
+  <section class="actions">
+    <button id="btnTarget" type="button" class="btn btn-primary">SET TARGET</button>
+    <button id="btnShare"  type="button" class="btn">SHARE JOURNEY</button>
+    <button id="btnReset"  type="button" class="btn btn-quiet">RESET INVERSION</button>
   </section>
 
   <p id="toast" class="toast" role="status" aria-live="polite"></p>
 
-  <footer class="footnote">
-    <p>时间不由计时器驱动，而由锚点推算：<code>显示时间 = 2 × 锚点 − 此刻</code>。<br>
-       所以关掉页面、关掉电脑、过几天再来，它都一直在往回走。</p>
-    <p class="footnote-dim">锚点存在这台设备的浏览器里。换设备或清空站点数据会重新出发；用上面的链接可把同一段旅程带走。</p>
-  </footer>
+  <!-- ── 辅助设置 ───────────────────────────────────── -->
+  <details class="drawer">
+    <summary class="drawer-head">
+      <span class="drawer-title">WORLD VECTOR <span class="cn">回溯倍率</span></span>
+      <span id="rateNow" class="drawer-value">×1</span>
+    </summary>
+    <div class="drawer-body">
+      <div id="ratePresets" class="chips">
+        <button type="button" class="chip" data-rate="0">HOLD</button>
+        <button type="button" class="chip" data-rate="0.5">×0.5</button>
+        <button type="button" class="chip" data-rate="1">×1</button>
+        <button type="button" class="chip" data-rate="2">×2</button>
+        <button type="button" class="chip" data-rate="10">×10</button>
+        <button type="button" class="chip" data-rate="60">×60</button>
+        <button type="button" class="chip" data-rate="3600">×3600</button>
+      </div>
+      <div class="inline-form">
+        <label class="sr-only" for="rateInput">自定义倍率</label>
+        <input id="rateInput" type="number" min="0" max="100000" step="0.1" inputmode="decimal">
+        <button id="btnRateApply" type="button" class="btn btn-sm">APPLY</button>
+      </div>
+      <p id="rateHint" class="drawer-hint"></p>
+    </div>
+  </details>
+
+  <details class="drawer">
+    <summary class="drawer-head">
+      <span class="drawer-title">ABOUT <span class="cn">工作原理</span></span>
+      <span class="drawer-value">?</span>
+    </summary>
+    <div class="drawer-body prose">
+      <p>进入逆行后，你的主观时间照常向前，而你所在的世界时间坐标向过去移动。装置不靠计时器累加，每一帧都由逆行起点重新推算：</p>
+      <p class="formula">elapsed = now − anchor<br>worldTime = anchor − elapsed<br>worldTime = 2 × anchor − now</p>
+      <p>所以关掉页面、设备休眠、隔几天再打开，逆行都不会中断，也不会累积误差。TARGET 只是导航标记 —— 到达后世界时间继续逆行，装置不会替你执行转向。</p>
+      <p class="dim">时间基准取自本机系统时钟。修改系统时间会直接改变航程位置。锚点与目标存在这台设备的浏览器里；用 SHARE JOURNEY 可把同一段航程带到别的设备。</p>
+    </div>
+  </details>
+
+  <div id="shiftNotice" class="shift-notice" hidden>
+    <span>SYSTEM TIME SHIFT DETECTED · 检测到系统时间跳变</span>
+    <button id="btnShiftDismiss" type="button" class="shift-x" aria-label="忽略">×</button>
+  </div>
 
 </main>
+
+<!-- ── Modal：设定目标 / 自定义逆行起点 ─────────────── -->
+<div id="modalBack" class="modal-back" hidden>
+  <div id="modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle" class="modal-title">TARGET WORLD TIME</h2>
+    <p id="modalSub" class="modal-sub">设定要逆行抵达的世界时间</p>
+
+    <div id="modalQuick" class="chips"></div>
+
+    <div class="modal-fields">
+      <label class="fld">
+        <span class="fld-label">DATE</span>
+        <input id="modalDate" type="date">
+      </label>
+      <label class="fld">
+        <span class="fld-label">TIME</span>
+        <input id="modalTime" type="time" step="1">
+      </label>
+    </div>
+
+    <p id="modalError" class="modal-error" role="alert"></p>
+
+    <div class="modal-actions">
+      <button id="btnModalClear"  type="button" class="btn btn-quiet btn-sm" hidden>CLEAR</button>
+      <span class="spacer"></span>
+      <button id="btnModalCancel" type="button" class="btn btn-sm">CANCEL</button>
+      <button id="btnModalApply"  type="button" class="btn btn-primary btn-sm">SET</button>
+    </div>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>
